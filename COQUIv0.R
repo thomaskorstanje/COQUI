@@ -2,6 +2,8 @@
 #@thomaskorstanje --- Olsen Lab, University of Maine, Earth and Climate Sciences
 #lintr : skip-file
 
+#The goal of this app is to 
+
 library(tidyverse)
 library(neonUtilities)
 #------------------------------------------------------------------------------------- location and date----
@@ -13,7 +15,7 @@ user_startdate <- readline(prompt = "Enter start date (YYYY-MM): ")
 user_enddate <- readline(prompt = "Enter end date (YYYY-MM): ")
 
 #------------------------------------------------------------------------------------- data downloads ----
-#surface water chemistry data for 2018-2022
+#surface water chemistry data for specified date
 NEONsurfacewaterchem <- loadByProduct(dpID = "DP1.20093.001",
                                       site =c(user_site),
                                       startdate = user_startdate,
@@ -21,21 +23,21 @@ NEONsurfacewaterchem <- loadByProduct(dpID = "DP1.20093.001",
                                       tabl= "swc_externalLabDataByAnalyte",
                                       check.size = FALSE)
 
-#continuous discharge data for 2018-2022
+#continuous discharge data for specified date
 NEONcontinuousDischarge <- loadByProduct(dpID = "DP4.00130.001",
                                          site =c(user_site),
                                          startdate = user_startdate,
                                          enddate = user_enddate,
                                          tabl= "csd_continuousDischarge",
                                          check.size = FALSE)
-#precipitation data for 2018-2022
+#precipitation data for specified date
 NEONprecipitation <- loadByProduct(dpID = "DP1.00006.001",
                                    site =c(user_site),
                                    startdate = user_startdate,
                                    enddate = user_enddate,
                                    tabl= "SECPRE_1min",
                                    check.size = FALSE)
-#precipitation chemistry data for 2018-2022
+#precipitation chemistry data for specified date
 NEONprecipitationchem <- loadByProduct(dpID = "DP1.00013.001",
                                        site =c(user_site),
                                        startdate = user_startdate,
