@@ -1,41 +1,55 @@
+# Shiny app code
 library(shiny)
+library(ggplot2)
 
-# Define UI ----
+source("neonfetch.R")
+
+# UI
 ui <- fluidPage(
-
   titlePanel(
-    h1("COQUI"),
-    h2("Chemical, Organics and Q(discharge) User Interface")),
-
-    
+    img(src = "www/logo.png", height = 150, width = 800),
+    h2("COQUI - Chemistry, Organics and Q(discharge) User Interface")
+  ),
+  
   sidebarLayout(
     sidebarPanel(
-      textInput("site_code", "Enter the four-letter site code:", ""),
-      textInput("start_date", "Enter start date (YYYY-MM):", ""),
-      textInput("end_date", "Enter end date (YYYY-MM):", ""),
-      img(src = "www/coquilogo.png", height = 100, width = 100),
+      textInput("USERsite", label = h3("NEON site")),
+
+      dateInput("startDate", label = h3("Start Date"), value = "2020-01-01"),
+
+      dateInput("endDate", label = h3("End Date"), value = "2020-03-31"),
+
+      checkboxGroupInput("dataselect", label = h4("Data selection"), choices = c(
+        "Continuous Discharge" = "contQ",
+        "Surface Water Chemistry" = "swc",
+        "Precipitation Accumulation" = "precip",
+        "Precipitation Chemistry" = "pchem"
+      )),
+      
+      actionButton("submit", label = h4("Submit"))
     ),
     mainPanel(
-    
+      verbatimTextOutput("results")
     )
   )
 )
 
-# Define server logic ----
+# Server
 server <- function(input, output) {
-  
-  user_inputs <- reactive({
-    c(
-      paste("Site Code:", input$site_code),
-      paste("Start Date:", input$start_date),
-      paste("End Date:", input$end_date)
-    )
-  })
-  
-  output$user_inputs <- renderPrint({
-    user_inputs()
+  observeEvent(input$submit, {
+    USERsite <- input$USERsite
+    USERstartdate <- input$startDate
+    USERenddate <- input$endDate
+    dataselect <- input$dataselect
+    
+    # Call your function with user inputs and selected data
+    result_data <- coqui_function(USERsite, USERstartdate, USERenddate, dataselect)
+    
+    # Display the results
+    output$results <- renderPrint({
+      result_data$SITEall
+    })
   })
 }
 
-# Run the app ----
-shinyApp(ui = ui, server = server)
+shinyApp(ui, server)
