@@ -116,6 +116,52 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
     SITEall <- left_join(SITEall, pwc, by = "date")
   } #END OF PCHEM
   
+  if ("nwater" %in% dataselect) {
+    NEONnitratesw <- loadByProduct(dpID = "DP1.20033.001",
+                                   site = user_site,
+                                   startdate = user_startdate,
+                                   enddate = user_enddate,
+                                   tabl = "NSW_15_minute",
+                                   check.size = FALSE)
+    nwater <- data.frame(date = as.Date(NEONnitratesw$NSW_15_minute$startDateTime), Nitrate_Mean = NEONnitratesw$NSW_15_minute$surfWaterNitrateMean)
+    nwater <- nwater %>% 
+       group_by(date) %>%
+      summarize(across(everything(), ~ mean(., na.rm = TRUE)))
+    SITEall <- left_join(SITEall, nwater, by = "date")
+  }#END OF NWATER
+
+  if ("waq" %in% dataselect) {
+    NEONwaterqual <- loadByProduct(dpID = "DP1.20288.001",
+                                   site = user_site,
+                                   startdate = user_startdate,
+                                   enddate = user_enddate,
+                                   tabl = "waq_instantaneous",
+                                   check.size = FALSE)
+    waq <- data.frame(date = as.Date(NEONwaterqual$waq_instantaneous$startDateTime), 
+                      waqSpecCond = NEONwaterqual$waq_instantaneous$specificConductance,
+                      waqDO = NEONwaterqual$waq_instantaneous$dissolvedOxygen,
+                      waqsealevelDOSat = NEONwaterqual$waq_instantaneous$seaLevelDissolvedOxygenSat,
+                      waqlocalDOSat = NEONwaterqual$waq_instantaneous$localDissolvedOxygenSat,
+                      waqpH = NEONwaterqual$waq_instantaneous$pH,
+                      waqchlorophyll = NEONwaterqual$waq_instantaneous$chlorophyll,
+                      waqRelFluoro = NEONwaterqual$waq_instantaneous$chlaRelativeFluorescence,
+                      waqTurbidity = NEONwaterqual$waq_instantaneous$turbidity,
+                      waqfDOM = NEONwaterqual$waq_instantaneous$fDOM)
+    waq_summary <- waq %>%
+    group_by(date) %>%
+    summarise(
+          mean_waqSpecCond = mean(waqSpecCond),
+          mean_waqDO = mean(waqDO),
+          mean_waqsealevelDOSat = mean(waqsealevelDOSat),
+          mean_waqlocalDOSat = mean(waqlocalDOSat),
+          mean_waqpH = mean(waqpH),
+          mean_waqchlorophyll = mean(waqchlorophyll),
+          mean_waqRelFluoro = mean(waqRelFluoro),
+          mean_waqTurbidity = mean(waqTurbidity),
+          mean_waqfDOM = mean(waqfDOM))
+    SITEall <- left_join(SITEall, waq_summary, by = "date")
+  }
+
   SITEall$numdate <- yday(SITEall$date)
   
 selcol <- c("numdate", "date")

@@ -13,7 +13,11 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-      textInput("USERsite", label = h3("NEON site")),
+      selectInput("USERsite", label = h3("NEON site"),
+      choices = c("ARIK", "BARC", "BIGC", "BLDE", "BLUE", "BLWA", "CARI", "COMO", "CRAM", "CUPE",
+                  "FLNT", "GUIL", "HOPB", "KING", "LECO", "LEWI", "LIRO", "MART", "MAYF", "MCDI",
+                  "MCRA", "OKSR", "POSE", "PRIN", "PRLA", "PRPO", "REDB", "SUGG", "SYCA", "TECR", "TOMB", "TOOK", "WALK", "WLOU"), 
+                  selected = "CUPE"),
 
       dateInput("startDate", label = h3("Start Date"), value = "2020-01-01"),
 
@@ -23,7 +27,9 @@ ui <- fluidPage(
         "Continuous Discharge" = "contQ",
         "Surface Water Chemistry" = "swc",
         "Precipitation Accumulation" = "precip",
-        "Precipitation Chemistry" = "pchem"
+        "Precipitation Chemistry" = "pchem",
+        "Nitrate in Surface Water" = "nwater",
+        "Water Quality" = "waq"
       )),
       
       actionButton("submit", label = h4("Submit"))
