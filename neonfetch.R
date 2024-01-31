@@ -16,6 +16,21 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
   user_enddate <- format(user_enddate, "%Y-%m")
 
   # Data downloads based on user selection
+  if ("contQ" %in% dataselect) {
+    NEONcontinuousDischarge <- loadByProduct(dpID = "DP4.00130.001",
+                                             site = c(user_site),
+                                             startdate = user_startdate,
+                                             enddate = user_enddate,
+                                             tabl = "csd_continuousDischarge",
+                                             check.size = FALSE)
+    
+    maxQraw <- data.frame(date = as.Date(NEONcontinuousDischarge$csd_continuousDischarge$endDate), maxQ = NEONcontinuousDischarge$csd_continuousDischarge$maxpostDischarge)
+    maxQdaily <- maxQraw %>%
+      group_by(date) %>%
+      summarize(across(everything(), ~ mean(., na.rm = TRUE)))
+    SITEall <- left_join(SITEall, maxQdaily, by = "date")
+  } #END OF CONTQ
+
   if ("swc" %in% dataselect) {
     NEONsurfacewaterchem <- loadByProduct(dpID = "DP1.20093.001",
                                           site = c(user_site),
@@ -29,7 +44,7 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
                          analyteconc = NEONsurfacewaterchem$swc_externalLabDataByAnalyte$analyteConcentration)
     swc <- split(swcraw, swcraw$analyte)
     
-    analytes <- c("Br", "Ca", "Cl", "CO3", "DIC", "DOC", "F", "Fe", "HCO3", "K", "Mg", "Mn", "Na", "NH4 - N", "NO2 - N", "NO3+NO2 - N", "Ortho - P", "ANC", "pH", "Si", "SO4", "specificConductance", "TDN", "TDP", "TDS", "TN", "TOC", "TP", "TPC", "TPN", "TSS", "TSS - Dry Mass", "UV Absorbance (254 nm)", "UV Absorbance (280 nm)")
+    analytes <- names(swc)
     
     analyte_data_frames <- list()
     
@@ -53,26 +68,10 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
     colnames(combined_dataall) <- c("date", analytes)
     
     # Update SITEall with surface water chemistry data
-    SITEall <- combined_dataall
+    SITEall <- left_join(SITEall, combined_dataall, by = "date")
   } #END OF SWC
   
-  if ("contQ" %in% dataselect) {
-    NEONcontinuousDischarge <- loadByProduct(dpID = "DP4.00130.001",
-                                             site = c(user_site),
-                                             startdate = user_startdate,
-                                             enddate = user_enddate,
-                                             tabl = "csd_continuousDischarge",
-                                             check.size = FALSE)
-    
-    maxQraw <- data.frame(date = as.Date(NEONcontinuousDischarge$csd_continuousDischarge$endDate), maxQ = NEONcontinuousDischarge$csd_continuousDischarge$maxpostDischarge)
-    maxQdaily <- maxQraw %>%
-      group_by(date) %>%
-      summarize(across(everything(), ~ mean(., na.rm = TRUE)))
-    combinedQ <- left_join(SITEall, maxQdaily, by = "date")
-    
-    # Update SITEall with discharge data
-    SITEall <- combinedQ
-  } #END OF CONTQ
+  
   
   if ("precip" %in% dataselect) {
     NEONprecipitation <- loadByProduct(dpID = "DP1.00006.001",
@@ -87,10 +86,9 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
       mutate(date = as.Date(date)) %>%
       group_by(date) %>%
       summarize(daily_precip = sum(precip))
-    combinedPrecip <- left_join(SITEall, precipsum, by = "date")
+    SITEall <- left_join(SITEall, precipsum, by = "date")
     
-    # Update SITEall with precipitation data
-    SITEall <- combinedPrecip
+   
   } #END OF PRECIP
   
   if ("pchem" %in% dataselect) {

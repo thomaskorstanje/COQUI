@@ -2,13 +2,12 @@
 library(shiny)
 library(ggplot2)
 library(shinydashboard)
-library(DT)
 
 source("neonfetch.R")
 
 #ui
 ui <- dashboardPage(
-dashboardHeader(title = "COQUI v0.3.1"),
+dashboardHeader(title = "COQUI v0.2.1"),
   dashboardSidebar(
     sidebarMenu(
       selectInput("USERsite", label = h4("NEON site"),
@@ -17,27 +16,24 @@ dashboardHeader(title = "COQUI v0.3.1"),
                               "POSE", "PRIN", "PRLA", "PRPO", "REDB", "SUGG", "SYCA", "TECR", "TOMB", "TOOK", "WALK", "WLOU"), 
                   selected = "CUPE"),
 
-      dateInput("startDate", label = h4("Start Date"), value = "2020-01-01"),
-      dateInput("endDate", label = h4("End Date"), value = "2020-03-31"),
+      dateInput("startDate", label = h4("Start Date"), value = "2019-01-01"),
+      dateInput("endDate", label = h4("End Date"), value = "2019-03-31"),
       br(),
-      actionButton("submit", label = "Submit", icon =icon("play")),
-      menuItem("Basic Options", tabName = "Basic", icon = icon("gear"), startExpanded = TRUE, selected = TRUE,
-               checkboxGroupInput("dataselect", label = h4("Dataset Selection"), choices = c(
+      checkboxGroupInput("dataselect", label = h4("Dataset Selection"), choices = c(
                  "Continuous Discharge" = "contQ",
                  "Surface Water Chemistry" = "swc",
                  "Precipitation Accumulation" = "precip",
                  "Precipitation Chemistry" = "pchem",
                  "Nitrate in Surface Water" = "nwater",
                  "Water Quality" = "waq"),
-                 selected = c("contQ", "swc", "precip", "pchem", "nwater", "waq")
-               ),
-               radioButtons("graphselect", label = "Plot Selecection", choices = c("Discharge","Precipitation")),
-               br()
-      ),
+                 selected = c("contQ", "swc", "precip", "pchem", "nwater", "waq")),
+      br(),
+      actionButton("submit", label = "Submit", icon =icon("play")),
       menuItem("Advanced Options", tabName = "Advanced", icon = icon("gears"),
+              checkboxInput("Use Advanced Options", label = "Use Advanced Options", value = FALSE),
                #menuItem("Continuous Discharge", tabName = "contQtab", icon = icon("chart-line")
                #),
-               menuItem("Surface Water Chemistry", tabName = "swctab", icon = icon("flask"),
+              menuItem("Surface Water Chemistry", tabName = "swctab", icon = icon("flask"),
                 checkboxGroupInput("swcoptions", label = "included analytes", 
                                 choices = c("Br" = "swcBr", 
                                             "Ca" = "swcCa", 
@@ -60,7 +56,7 @@ dashboardHeader(title = "COQUI v0.3.1"),
                                             "pH" = "swcpH", 
                                             "Si" = "swcSi", 
                                             "SO4" = "swcSO4", 
-                                            "specificConductance" = "swcspecificConductance", 
+                                            "Specific Conductance" = "swcspecificConductance", 
                                             "TDN" = "swcTDN", 
                                             "TDP" = "swcTDP", 
                                             "TDS" = "swcTDS", 
@@ -89,17 +85,18 @@ dashboardHeader(title = "COQUI v0.3.1"),
                                 choices = c("specificConductance", "dissolvedOxygen", "seaLevelDissolvedOxygenSat", "localDissolvedOxygenSat", "pH", "chlorophyll", "chlaRelativeFluorescence", "turbidity", "fDOM"),
                                 selected = c("specificConductance", "dissolvedOxygen", "seaLevelDissolvedOxygenSat", "localDissolvedOxygenSat", "pH", "chlorophyll", "chlaRelativeFluorescence", "turbidity", "fDOM"))
                )
-      )
+      ) 
     )
   ),
   dashboardBody(
-    fluidRow(
-        box(title = "plot", solidHeader = TRUE,
 
-        )
+    fluidRow(
+      box(dataTableOutput("dataTable"))
     ),
     fluidRow(
-        box(title = "df")
+      box(
+        downloadButton("downloadData", label = "Download Data")
+      )
     )
   )
 )
@@ -110,16 +107,16 @@ server <- function(input, output) {
     USERstartdate <- input$startDate
     USERenddate <- input$endDate
     dataselect <- input$dataselect
-
+    
     result_data <- coqui_function(USERsite, USERstartdate, USERenddate, dataselect)
     
     result_data$SITEall
-  })
-
+  }) 
   # Render data table
-  output$dataTable <- renderDT({
-    datatable(reactive_data(), options = list(pageLength = 10))
-  })
+  output$dataTable <- renderDataTable({
+    reactive_data()
+  }, options = list(pageLength = 10, scrollX = TRUE, scrollY = "250px"))
+  
   output$downloadData <- downloadHandler(
     filename = function() {
       paste("coqui_data_", Sys.Date(), ".csv", sep = "")
