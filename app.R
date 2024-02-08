@@ -4,10 +4,13 @@ library(ggplot2)
 library(shinydashboard)
 
 source("neonfetch.R")
-
+#
 #ui
 ui <- dashboardPage(
-dashboardHeader(title = "COQUI v0.2.1"),
+dashboardHeader(title = "COQUI v0.3.0",
+    tags$li(
+      class = "dropdown",
+      tags$img(src = "www/coquifrog.jpg", height = 50, width = 50, style = "margin-top: 10px; margin-bottom: 10px; margin-right: 10px;"))),
   dashboardSidebar(
     sidebarMenu(
       selectInput("USERsite", label = h4("NEON site"),
@@ -25,67 +28,11 @@ dashboardHeader(title = "COQUI v0.2.1"),
                  "Precipitation Accumulation" = "precip",
                  "Precipitation Chemistry" = "pchem",
                  "Nitrate in Surface Water" = "nwater",
-                 "Water Quality" = "waq"),
-                 selected = c("contQ", "swc", "precip", "pchem", "nwater", "waq")),
+                 "Water Quality" = "waq")
+                 ),
       br(),
-      actionButton("submit", label = "Submit", icon =icon("play")),
-      menuItem("Advanced Options", tabName = "Advanced", icon = icon("gears"),
-              checkboxInput("Use Advanced Options", label = "Use Advanced Options", value = FALSE),
-               #menuItem("Continuous Discharge", tabName = "contQtab", icon = icon("chart-line")
-               #),
-              menuItem("Surface Water Chemistry", tabName = "swctab", icon = icon("flask"),
-                checkboxGroupInput("swcoptions", label = "included analytes", 
-                                choices = c("Br" = "swcBr", 
-                                            "Ca" = "swcCa", 
-                                            "Cl" = "swcCl", 
-                                            "CO3" = "swcCO3", 
-                                            "DIC" = "swcDIC", 
-                                            "DOC" = "swcDOC", 
-                                            "F" = "swcF", 
-                                            "Fe" = "swcFe", 
-                                            "HCO3" = "swcHCO3", 
-                                            "K" = "swcK", 
-                                            "Mg" = "swcMg", 
-                                            "Mn" = "swcMn", 
-                                            "Na" = "swcNa", 
-                                            "NH4 - N" = "swcNH4 - N", 
-                                            "NO2 - N" = "swcNO2 - N", 
-                                            "NO3+NO2 - N" = "swcNO3+NO2 - N", 
-                                            "Ortho - P" = "swcOrtho - P",
-                                            "ANC" = "swcANC", 
-                                            "pH" = "swcpH", 
-                                            "Si" = "swcSi", 
-                                            "SO4" = "swcSO4", 
-                                            "Specific Conductance" = "swcspecificConductance", 
-                                            "TDN" = "swcTDN", 
-                                            "TDP" = "swcTDP", 
-                                            "TDS" = "swcTDS", 
-                                            "TN" = "swcTN", 
-                                            "TOC" = "swcTOC", 
-                                            "TP" = "swcTP", 
-                                            "TPC" = "swcTPC", 
-                                            "TPN" = "swcTPN", 
-                                            "TSS" = "swcTSS", 
-                                            "TSS - Dry Mass" = "swcTSS - Dry Mass",
-                                            "UV Absorbance (254 nm)" = "swcUV Absorbance (254 nm)", 
-                                            "UV Absorbance (280 nm)" = "swcUV Absorbance (280 nm)"),
-                                selected = c("Br", "Ca", "Cl", "CO3", "DIC", "DOC", "F", "Fe", "HCO3", "K", "Mg", "Mn", "Na", "NH4 - N", "NO2 - N", "NO3+NO2 - N", "Ortho - P", "ANC", "pH", "Si", "SO4", "specificConductance", "TDN", "TDP", "TDS", "TN", "TOC", "TP", "TPC", "TPN", "TSS", "TSS - Dry Mass", "UV Absorbance (254 nm)", "UV Absorbance (280 nm)"))
-               ),
-               #menuItem("Precipitation Accumulation", tabName = "preciptab", icon = icon("cloud-rain")
-               #),
-               menuItem("Precipitation Chemistry", tabName = "pchemtab", icon = icon("droplet"),
-                checkboxGroupInput("pchemoptions", label = "included analytes",
-                                choices = c("Ca", "Mg", "K", "Na", "NH4", "NO3", "SO4", "PO4", "Cl", "Br"),
-                                selected = c("Ca", "Mg", "K", "Na", "NH4", "NO3", "SO4", "PO4", "Cl", "Br"))
-               ),
-               #menuItem("Nitrate in Surface Water", tabName = "nwatertab", icon = icon("atom")
-               #),
-               menuItem("Water Quality", tabName = "waqtab", icon = icon("glass-water"),
-                checkboxGroupInput("waqoptions", label = "included analytes",
-                                choices = c("specificConductance", "dissolvedOxygen", "seaLevelDissolvedOxygenSat", "localDissolvedOxygenSat", "pH", "chlorophyll", "chlaRelativeFluorescence", "turbidity", "fDOM"),
-                                selected = c("specificConductance", "dissolvedOxygen", "seaLevelDissolvedOxygenSat", "localDissolvedOxygenSat", "pH", "chlorophyll", "chlaRelativeFluorescence", "turbidity", "fDOM"))
-               )
-      ) 
+      actionButton("submit", label = "Submit", icon =icon("play"))
+      
     )
   ),
   dashboardBody(
