@@ -4,13 +4,12 @@ library(ggplot2)
 library(shinydashboard)
 
 source("neonfetch.R")
-#
 #ui
 ui <- dashboardPage(
 dashboardHeader(title = "COQUI v0.3.0",
     tags$li(
       class = "dropdown",
-      tags$img(src = "www/coquifrog.jpg", height = 50, width = 50, style = "margin-top: 10px; margin-bottom: 10px; margin-right: 10px;"))),
+      tags$img(src = "coquifrog.png", height = 50, width = 50, style = "margin-top: 10px; margin-bottom: 10px; margin-right: 10px;"))),
   dashboardSidebar(
     sidebarMenu(
       selectInput("USERsite", label = h4("NEON site"),
@@ -47,6 +46,7 @@ dashboardHeader(title = "COQUI v0.3.0",
     )
   )
 )
+
 #server
 server <- function(input, output) {
  reactive_data <- eventReactive(input$submit, {
