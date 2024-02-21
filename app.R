@@ -2,6 +2,7 @@
 library(shiny)
 library(ggplot2)
 library(shinydashboard)
+library(shinycssloaders)
 
 source("neonfetch.R")
 #ui
@@ -37,7 +38,7 @@ dashboardHeader(title = "COQUI v0.3.0",
   dashboardBody(
 
     fluidRow(
-      box(dataTableOutput("dataTable"))
+      box(height = 400, dataTableOutput("dataTable"))
     ),
     fluidRow(
       box(

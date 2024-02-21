@@ -72,25 +72,58 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
   } #END OF SWC
   
   
-  
-  if ("precip" %in% dataselect) {
-    NEONprecipitation <- loadByProduct(dpID = "DP1.00006.001",
-                                       site = c(user_site),
-                                       startdate = user_startdate,
-                                       enddate = user_enddate,
-                                       tabl = "SECPRE_1min",
-                                       check.size = FALSE)
+if ("precip" %in% dataselect) {
+  tryCatch({
+    NEONsecprecipitation <- loadByProduct(dpID = "DP1.00006.001",
+                                          site = c(user_site),
+                                          startdate = user_startdate,
+                                          enddate = user_enddate,
+                                          tabl = "SECPRE_30min",
+                                          check.size = FALSE)
     
-    precipraw <- data.frame(date = NEONprecipitation$SECPRE_1min$endDateTime, precip = NEONprecipitation$SECPRE_1min$secPrecipBulk)
-    precipsum <- precipraw %>%
-      mutate(date = as.Date(date)) %>%
-      group_by(date) %>%
-      summarize(daily_precip = sum(precip))
-    SITEall <- left_join(SITEall, precipsum, by = "date")
+    if (!is.null(NEONsecprecipitation$SECPRE_30min)) {
+      precipsecraw <- data.frame(date = NEONsecprecipitation$SECPRE_30min$endDateTime, secprecip = NEONsecprecipitation$SECPRE_30min$secPrecipBulk)
+      precipsecsum <- precipsecraw %>%
+        mutate(date = as.Date(date)) %>%
+        group_by(date) %>%
+        summarize(daily_secprecip = sum(secprecip))
+      
+      SITEall <- left_join(SITEall, precipsecsum, by = "date")
+    } else {
+      cat("No data found for SECPRE_30min. Skipping.\n")
+    }
+  }, error = function(e) {
+    cat("An error occurred while loading precipitation data:\n")
+    print(e)
+  })
+}
+
+if ("precip" %in% dataselect) {
+  tryCatch({
+    NEONpriprecipitation <- loadByProduct(dpID = "DP1.00006.001",
+                                          site = c(user_site),
+                                          startdate = user_startdate,
+                                          enddate = user_enddate,
+                                          tabl = "PRIPRE_30min",
+                                          check.size = FALSE)
     
-   
-  } #END OF PRECIP
-  
+    if (!is.null(NEONpriprecipitation$PRIPRE_30min)) {
+      precippriraw <- data.frame(date = NEONpriprecipitation$PRIPRE_30min$endDateTime, priprecip = NEONpriprecipitation$PRIPRE_30min$priPrecipBulk)
+      precipprisum <- precippriraw %>%
+        mutate(date = as.Date(date, format="%Y-%m-%d %H:%M:%S")) %>%
+        group_by(date) %>%
+        summarize(daily_priprecip = sum(priprecip))
+      
+      SITEall <- left_join(SITEall, precipprisum, by = "date")
+    } else {
+      cat("No data found for PRIPRE_30min. Skipping.\n")
+    }
+  }, error = function(e_alt) {
+    cat("An error occurred while loading alternative precipitation data:\n")
+    print(e_alt)
+  })
+}
+
   if ("pchem" %in% dataselect) {
     NEONprecipitationchem <- loadByProduct(dpID = "DP1.00013.001",
                                            site = c(user_site),
@@ -168,10 +201,12 @@ if ("maxQ" %in% colnames(SITEall)) {
   selcol <- c(selcol, "maxQ")
 }
 
-if ("daily_precip" %in% colnames(SITEall)) {
-  selcol <- c(selcol, "daily_precip")
+if ("daily_secprecip" %in% colnames(SITEall)) {
+  selcol <- c(selcol, "daily_secprecip")
 }
-
+if ("daily_priprecip" %in% colnames(SITEall)) {
+  selcol <- c(selcol, "daily_priprecip")
+}
 SITEall <- SITEall %>%
   select(all_of(selcol), everything())
 
