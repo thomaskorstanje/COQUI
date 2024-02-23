@@ -1,4 +1,4 @@
-required_packages <- c("shiny", "ggplot2", "shinydashboard")
+required_packages <- c("shiny", "ggplot2", "shinydashboard", "neonUtilites")
 
 # Check for missing packages
 missing_packages <- setdiff(required_packages, rownames(installed.packages()))
@@ -12,6 +12,7 @@ if (length(missing_packages) > 0) {
 library(shiny)
 library(ggplot2)
 library(shinydashboard)
+library(neonUtilities)
 
 #defines the source file in which the COQUI function works
 source("neonfetch.R")
