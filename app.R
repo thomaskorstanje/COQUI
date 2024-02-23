@@ -13,20 +13,13 @@ library(shiny)
 library(ggplot2)
 library(shinydashboard)
 
-# Shiny app code
-library(shiny)
-library(ggplot2)
-library(shinydashboard)
-
 #defines the source file in which the COQUI function works
 source("neonfetch.R")
 
 #ui
-ui <- dashboardPage(
-dashboardHeader(title = "COQUI v0.3.3",
-    tags$li(
-      class = "dropdown",
-      tags$img(src = "coquifrog.png", height = 50, width = 50, style = "margin-top: 10px; margin-bottom: 10px; margin-right: 10px;"))),
+ui <- dashboardPage(skin = "blue",
+dashboardHeader(title = "COQUI v0.3.4",
+    tags$li(class = "dropdown")),
   dashboardSidebar(
     sidebarMenu(
       #NEON Aquatic site selection 
@@ -56,45 +49,54 @@ dashboardHeader(title = "COQUI v0.3.3",
   #main app body ui 
   dashboardBody(
     fluidRow(
-      #final datatable output 
-      box(dataTableOutput("dataTable")),
-      style = "height:100%;",
-      #descriptions of the datasets
-      box("Dataset Descriptions:",
-        br(),
-        br(), "- Continuous Discharge : Continuous measurements of stream discharge calculated from a stage-discharge rating curve and sensor-based measurements of water surface elevation.",
-        br(),
-        br(), "- Surface Water Chemistry : Grab samples of surface water chemistry including general chemistry, anions, cations, and nutrients.",
-        br(),
-        br(), "- Precipitation Accumulation : Bulk precipitation collected using up to three methods - primary, secondary, and throughfall. Bulk precipitation is determined at five- and thirty-minute intervals for primary precipitation and at one- and thirty-minute intervals for secondary precipitation. Some sites only have one or the other indicated by pri or sec",
-        br(),
-        br(), "- Precipitation Chemistry : Total dissolved chemical ion concentrations of sulfate (SO4 2-), nitrate (NO3-), chloride (Cl-), bromide (Br-), ammonium (NH4+), phosphate (PO4 3-), calcium (Ca2+), magnesium (Mg2+), potassium (K+), sodium (Na+), and pH/Conductivity in precipitation water",
-        br(),
-        br(), "- Nitrate in Surface Water : In situ sensor-based nitrate concentration, available as fifteen minute averages in surface water in lakes, wadeable and non-wadeable streams",
-        br(),
-        br(), "- Water Quality : In situ sensor-based specific conductivity, concentration of chlorophyll a, dissolved oxygen content, fDOM concentration, pH, and turbidity, available as one- or five-minute instantaneous measurements in surface water of lakes, wadeable streams, and non-wadeable streams." )
-    ),
-
-    fluidRow(
-      #download to computer button
-      box(downloadButton("downloadData", label = "Download Data")),
-      #about and history tabs
+      tabBox(
+        tabPanel(
+          #final datatable output 
+          title = "Data Table", background = "light-blue",
+          dataTableOutput("dataTable")
+        ),
+        tabPanel(title = "Download Data", 
+          downloadButton("downloadData", label = "Download"),
+          "Downloads data to .csv"
+        )
+        #descriptions of the datasets
+        
+      ),
       tabBox(
         #app about section
         tabPanel("About",
-        "COQUI started as an R script to download selected datasets from NEON and merge them."
+        "Select NEON Aquatic site with the drop down menu. Then select the start and end date and which datasets you want to view. The larger the date range, the longer it takes to make a data table.",
+        br(), br(),
+        "COQUI - Chemical, Organics and Q(discharge) User Interface", br(), "Olsen Lab - University of Maine, Earth and Climate Sciences", br(),"@thomaskorstanje", br(), 
+        img(src = "coquifrog.png", width = 50, height = 50)
         ),
         #app version history
         tabPanel("Version History",
+        br(),"----v0.3.4 - UI changes",
         br(),"----v0.3.3 - added descriptions",    
         br(),"----v0.3.2 - fixed pri and sec precip problem",
         br(),"----v.0.3.1 - fixed waq data skip problem",
         br(),"v0.3.0 - branched to finalize basic function",
         br(),"----v0.2.1 - fixed SITEall overwrite bug", 
         br(),"v0.2.0 - first working vesion of app", 
-        br(),"v0.1.0 - modified RIOchem script, no UI"))
+        br(),"v0.1.0 - modified RIOchem script, no UI"),
+
+        tabPanel(title = "Dataset Descriptions", background = "light-blue",
+          br(),
+          br(), "- Continuous Discharge : Continuous measurements of stream discharge calculated from a stage-discharge rating curve and sensor-based measurements of water surface elevation.",
+          br(),
+          br(), "- Surface Water Chemistry : Grab samples of surface water chemistry including general chemistry, anions, cations, and nutrients.",
+          br(),
+          br(), "- Precipitation Accumulation : Bulk precipitation collected using up to three methods - primary, secondary, and throughfall. Bulk precipitation is determined at five- and thirty-minute intervals for primary precipitation and at one- and thirty-minute intervals for secondary precipitation. Some sites only have one or the other indicated by pri or sec",
+          br(),
+          br(), "- Precipitation Chemistry : Total dissolved chemical ion concentrations of sulfate (SO4 2-), nitrate (NO3-), chloride (Cl-), bromide (Br-), ammonium (NH4+), phosphate (PO4 3-), calcium (Ca2+), magnesium (Mg2+), potassium (K+), sodium (Na+), and pH/Conductivity in precipitation water",
+          br(),
+          br(), "- Nitrate in Surface Water : In situ sensor-based nitrate concentration, available as fifteen minute averages in surface water in lakes, wadeable and non-wadeable streams",
+          br(),
+          br(), "- Water Quality : In situ sensor-based specific conductivity, concentration of chlorophyll a, dissolved oxygen content, fDOM concentration, pH, and turbidity, available as one- or five-minute instantaneous measurements in surface water of lakes, wadeable streams, and non-wadeable streams." 
+        )) 
     )
-  )
+  ) 
 )
 
 #server
