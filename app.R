@@ -19,7 +19,7 @@ source("neonfetch.R")
 
 #ui
 ui <- dashboardPage(skin = "blue",
-dashboardHeader(title = "COQUI v0.3.4",
+dashboardHeader(title = "COQUI v0.3.5",
     tags$li(class = "dropdown")),
   dashboardSidebar(
     sidebarMenu(
@@ -73,6 +73,7 @@ dashboardHeader(title = "COQUI v0.3.4",
         ),
         #app version history
         tabPanel("Version History",
+        br(),"----v0.3.5 - small fixes after testing all AIS sites",
         br(),"----v0.3.4 - UI changes",
         br(),"----v0.3.3 - added descriptions",    
         br(),"----v0.3.2 - fixed pri and sec precip problem",
@@ -102,23 +103,18 @@ dashboardHeader(title = "COQUI v0.3.4",
 
 #server
 server <- function(input, output, session) {
-    
   reactive_data <- eventReactive(input$submit, {
     USERsite <- input$USERsite
     USERstartdate <- input$startDate
     USERenddate <- input$endDate
     dataselect <- input$dataselect
-    
     result_data <- coqui_function(USERsite, USERstartdate, USERenddate, dataselect)
-    
     result_data$SITEall
-  }) 
-  
+  })
   # Render data table
   output$dataTable <- renderDataTable({
     reactive_data()
   }, options = list(pageLength = 10, scrollX = TRUE, scrollY = "250px"))
-  
   output$downloadData <- downloadHandler(
     filename = function() {
       paste("coqui_data_", Sys.Date(), ".csv", sep = "")

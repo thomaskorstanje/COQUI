@@ -5,6 +5,7 @@ Olsen Lab - University of Maine, Earth and Climate Sciences
 
 
 Changelog:
+    v0.3.5 - small fixes after testing all AIS sites
     v0.3.4 - UI changes
     v0.3.3 - added descriptions
     v0.3.2 - fixed pri and sec precip problem

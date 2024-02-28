@@ -17,6 +17,7 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
 
   # Data downloads based on user selection
   if ("contQ" %in% dataselect) {
+  tryCatch({
     NEONcontinuousDischarge <- loadByProduct(dpID = "DP4.00130.001",
                                              site = c(user_site),
                                              startdate = user_startdate,
@@ -29,9 +30,13 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
       group_by(date) %>%
       summarize(across(everything(), ~ mean(., na.rm = TRUE)))
     SITEall <- left_join(SITEall, maxQdaily, by = "date")
-  } #END OF CONTQ
+    }, error = function(err) {
+    cat("No Continuous Discharge Data Found", conditionMessage(err), "\n")
+  })
+} #END OF CONTQ
 
-  if ("swc" %in% dataselect) {
+  if ("swc" %in% dataselect){
+  tryCatch({
     NEONsurfacewaterchem <- loadByProduct(dpID = "DP1.20093.001",
                                           site = c(user_site),
                                           startdate = user_startdate,
@@ -69,7 +74,11 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
     
     # Update SITEall with surface water chemistry data
     SITEall <- left_join(SITEall, combined_dataall, by = "date")
-  } #END OF SWC
+    }, error = function(err) {
+    cat("No Surface Water Chemistry Data Found", conditionMessage(err), "\n")
+  })
+  }
+  #END OF SWC
   
   
 if ("precip" %in% dataselect) {
@@ -145,8 +154,11 @@ if ("precip" %in% dataselect) {
                         pCl = NEONprecipitationchem$wdp_chemLab$precipChloride,
                         pBr = NEONprecipitationchem$wdp_chemLab$precipBromide)
       
-      SITEall <- left_join(SITEall, pwc, by = "date")})
-  } #END OF PCHEM
+      SITEall <- left_join(SITEall, pwc, by = "date")
+      }, error = function(err) {
+    cat("No Precipitation Chemistry Data Found", conditionMessage(err), "\n")
+  })
+}#END OF PCHEM
   
   if ("nwater" %in% dataselect) {
     tryCatch({
@@ -160,8 +172,11 @@ if ("precip" %in% dataselect) {
       nwater <- nwater %>% 
         group_by(date) %>%
         summarize(across(everything(), ~ mean(., na.rm = TRUE)))
-      SITEall <- left_join(SITEall, nwater, by = "date")})
-  }#END OF NWATER
+      SITEall <- left_join(SITEall, nwater, by = "date")
+      }, error = function(err) {
+    cat("No Nitrate Water Data Found", conditionMessage(err), "\n")
+  })
+} # END OF NWATER
 
   if ("waq" %in% dataselect) {
     tryCatch({
@@ -193,8 +208,11 @@ if ("precip" %in% dataselect) {
             mean_waqRelFluoro = mean(waqRelFluoro),
             mean_waqTurbidity = mean(waqTurbidity),
             mean_waqfDOM = mean(waqfDOM))
-      SITEall <- left_join(SITEall, waq_summary, by = "date")})
-  }
+      SITEall <- left_join(SITEall, waq_summary, by = "date")
+      }, error = function(err) {
+    cat("No Water Quality Data Found", conditionMessage(err), "\n")
+  })#end of WAQ
+}
 
   SITEall$numdate <- yday(SITEall$date)
   
