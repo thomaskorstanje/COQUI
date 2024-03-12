@@ -49,7 +49,7 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
                          analyteconc = NEONsurfacewaterchem$swc_externalLabDataByAnalyte$analyteConcentration)
     swc <- split(swcraw, swcraw$analyte)
     
-    analytes <- names(swc)
+    analytes <- c("Br", "Ca", "Cl", "CO3", "DIC", "DOC", "F", "Fe", "HCO3", "K", "Mg", "Mn", "Na", "NH4 - N", "NO2 - N", "NO3+NO2 - N", "Ortho - P", "ANC", "pH", "Si", "SO4", "specificConductance", "TDN", "TDP", "TDS", "TN", "TOC", "TP", "TPC", "TPN", "TSS", "TSS - Dry Mass", "UV Absorbance (254 nm)", "UV Absorbance (280 nm)")
     
     analyte_data_frames <- list()
     

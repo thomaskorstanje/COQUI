@@ -19,7 +19,7 @@ source("neonfetch.R")
 
 #ui
 ui <- dashboardPage(skin = "blue",
-dashboardHeader(title = "COQUI v0.3.5",
+dashboardHeader(title = "COQUI v0.3.6",
     tags$li(class = "dropdown")),
   dashboardSidebar(
     sidebarMenu(
@@ -73,6 +73,7 @@ dashboardHeader(title = "COQUI v0.3.5",
         ),
         #app version history
         tabPanel("Version History",
+        br(),"----v0.3.6 - Reverted analyte scan, added progress bar",
         br(),"----v0.3.5 - small fixes after testing all AIS sites",
         br(),"----v0.3.4 - UI changes",
         br(),"----v0.3.3 - added descriptions",    
@@ -108,8 +109,27 @@ server <- function(input, output, session) {
     USERstartdate <- input$startDate
     USERenddate <- input$endDate
     dataselect <- input$dataselect
-    result_data <- coqui_function(USERsite, USERstartdate, USERenddate, dataselect)
-    result_data$SITEall
+
+    withProgress(message = 'Processing data...', value = 0, {
+      result_data <- coqui_function(USERsite, USERstartdate, USERenddate, dataselect)
+      Sys.sleep(1)  # Simulating some processing time for the progress bar
+
+      # Update progress bar
+      incProgress(1/3, detail = 'Step 1 of 3')
+      Sys.sleep(1)
+
+      # Additional processing steps can be added here, updating the progress bar accordingly
+
+      incProgress(1/3, detail = 'Step 2 of 3')
+      Sys.sleep(1)
+
+      incProgress(1/3, detail = 'Step 3 of 3')
+      Sys.sleep(1)
+
+      incProgress(1, detail = 'Processing complete.')
+
+      return(result_data$SITEall)
+    })
   })
   # Render data table
   output$dataTable <- renderDataTable({
