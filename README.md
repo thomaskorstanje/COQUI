@@ -2,6 +2,9 @@ COQUI - Chemical, Organics and Q(discharge) User Interface
 Olsen Lab - University of Maine, Earth and Climate Sciences 
 @thomaskorstanje
 
+How to use: 
+Download the files from github as a zip. Once extracted, open the folder with R Studio. Hit run app and explore NEON's aquatic data!    
+
 
 
 Changelog:
