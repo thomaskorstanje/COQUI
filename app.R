@@ -1,4 +1,4 @@
-required_packages <- c("shiny", "ggplot2", "shinydashboard", "neonUtilites")
+required_packages <- c("shiny", "tidyverse", "shinydashboard", "neonUtilites", "DT")
 
 # Check for missing packages
 missing_packages <- setdiff(required_packages, rownames(installed.packages()))
@@ -10,9 +10,10 @@ if (length(missing_packages) > 0) {
 
 # Load the required packages
 library(shiny)
-library(ggplot2)
+library(tidyverse)
 library(shinydashboard)
 library(neonUtilities)
+library(DT)
 
 # defines the source file in which the COQUI function works
 source("neonfetch.R")
@@ -61,7 +62,7 @@ ui <- dashboardPage(
         tabPanel(
           # final datatable output
           title = "Data Table", background = "light-blue",
-          dataTableOutput("dataTable")
+          DTOutput("dataTable")
         ),
         tabPanel(
           title = "Download Data",
@@ -74,7 +75,7 @@ ui <- dashboardPage(
         # app about section
         tabPanel(
           "About",
-          "Select NEON Aquatic site with the drop down menu, then select the start/end date and which datasets you want to view. The larger the date range, the longer it takes to make a data table. You can view the data in app, or download it ot .csv for future use.",
+          "Select NEON Aquatic site with the drop down menu, then select the start/end date and which datasets you want to view. The larger the date range, the longer it takes to make a data table. You can view the data in app, or download it to .csv for future use.",
           br(), br(),
           "COQUI - Chemical, Organics and Q(discharge) User Interface", br(), "Olsen Lab - University of Maine, Earth and Climate Sciences", br(), "@thomaskorstanje", br(),
           img(src = "coquifrog.png", width = 50, height = 50)
@@ -129,8 +130,6 @@ server <- function(input, output, session) {
       # Update progress bar
       incProgress(1 / 3, detail = "Step 1 of 3")
       Sys.sleep(1)
-
-      # Additional processing steps can be added here, updating the progress bar accordingly
 
       incProgress(1 / 3, detail = "Step 2 of 3")
       Sys.sleep(1)
