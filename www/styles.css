@@ -1,0 +1,10 @@
+/* COQUI - @thomaskorstanje, University of Maine - Environmental Geochemistry Lab
+Chemistry, Organics, Q(Discharge) User Interface */
+
+
+.map-container {
+    margin: 0 auto;  /* Set left and right margins to auto */
+    display: block;  /* Make it a block element */
+    width: 75%;      /* Set width of the container */
+    height: 600px;   /* Set height of the container */
+}

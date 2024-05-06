@@ -1,4 +1,3 @@
-
 COQUI - Chemical, Organics and Q(discharge) User Interface 
 Olsen Lab - University of Maine, Earth and Climate Sciences 
 @thomaskorstanje
@@ -10,10 +9,6 @@ Install and use guide:
 2. extract zip, then open app.R with R Studio
  
 3. Hit run app in upper right corner and explore NEON's aquatic data 
-
-Download the files from github as a zip. Once extracted, open app.R with R Studio. Hit run app and explore NEON's aquatic data!    
-
-
 
  Changelog:
 
