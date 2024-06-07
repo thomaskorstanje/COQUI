@@ -33,11 +33,11 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
           check.size = FALSE
         )
 
-        maxQraw <- data.frame(date = as.Date(NEONcontinuousDischarge$csd_continuousDischarge$endDate), maxQ = NEONcontinuousDischarge$csd_continuousDischarge$maxpostDischarge)
-        maxQdaily <- maxQraw %>%
+        avgQraw <- data.frame(date = as.Date(NEONcontinuousDischarge$csd_continuousDischarge$endDate), avgQ = NEONcontinuousDischarge$csd_continuousDischarge$maxpostDischarge)
+        avgQdaily <- avgQraw %>%
           group_by(date) %>%
           summarise(across(everything(), ~ round(mean(., na.rm = TRUE), 3)))
-        SITEall <- left_join(SITEall, maxQdaily, by = "date")
+        SITEall <- left_join(SITEall, avgQdaily, by = "date")
       },
       error = function(err) {
         cat("No Continuous Discharge Data Found", conditionMessage(err), "\n")
@@ -169,7 +169,7 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
           startdate = user_startdate,
           enddate = user_enddate,
           tabl = "wdp_chemLab",
-          check.size = FALSE
+          check.size = FALSE,
         )
 
         pwc <- data.frame(
@@ -265,8 +265,8 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
 
   selcol <- c("numdate", "date")
 
-  if ("maxQ" %in% colnames(SITEall)) {
-    selcol <- c(selcol, "maxQ")
+  if ("avgQ" %in% colnames(SITEall)) {
+    selcol <- c(selcol, "avgQ")
   }
 
   if ("daily_secprecip" %in% colnames(SITEall)) {
@@ -284,15 +284,23 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
 
 
 # function issues/limitations - numdate, plottraits,
-plot_function <- function(SITEall, plotop1, plotop2, p1swctype) {
+plot1_func <- function(SITEall, plotop1, p1swctype, p1pchemtype, p1waqtype) {
   if (plotop1 != "p1no") {
     if (plotop1 == "p1contQ") {
-      ggplot(SITEall, aes(x = numdate, y = maxQ)) +
+      ggplot(SITEall, aes(x = numdate, y = avgQ)) +
         geom_point() +
         labs(
           title = "",
           x = "Day of Year",
           y = "Discharge (L/s)"
+        )
+    } else if (plotop1 == "p1swc") {
+      ggplot(SITEall, aes(x = numdate, y = !!sym(p1swctype))) +
+        geom_point() +
+        labs(
+          title = "",
+          x = "Day of Year",
+          y = "Surface Water Chemistry"
         )
     } else if (plotop1 == "p1precip") {
       if ("daily_secprecip" %in% colnames(SITEall)) {
@@ -312,6 +320,14 @@ plot_function <- function(SITEall, plotop1, plotop2, p1swctype) {
             y = "Precipitation Accumulation (mm)"
           )
       }
+    } else if (plotop1 == "p1pchem") {
+      ggplot(SITEall, aes(x = numdate, y = !!sym(p1pchemtype))) +
+        geom_point() +
+        labs(
+          title = "",
+          x = "Day of Year",
+          y = "Precipitation Chemistry"
+        )
     } else if (plotop1 == "p1nwater") {
       ggplot(SITEall, aes(x = numdate, y = Nitrate_Mean)) +
         geom_point() +
@@ -320,17 +336,82 @@ plot_function <- function(SITEall, plotop1, plotop2, p1swctype) {
           x = "Day of Year",
           y = "Nitrate"
         )
-    } else if (plotop1 == "p1swc") {
-      ggplot(SITEall, aes(x = numdate, y = !!sym(p1swctype))) +
+    } else if (plotop1 == "p1waq") {
+      ggplot(SITEall, aes(x = numdate, y = !!sym(p1waqtype))) +
+        geom_point() +
+        labs(
+          title = "",
+          x = "Day of Year",
+          y = "Water Quality"
+        )
+    }
+  } else {
+    plot(NULL, xlim = c(0, 100), ylim = c(0, 100), type = "n", xlab = "", ylab = "")
+    text(50, 50, "No plot selected", cex = 2)
+  }
+}
+
+plot2_func <- function(SITEall, plotop2, p2swctype, p2pchemtype, p2waqtype) {
+  if (plotop2 != "p2no") {
+    if (plotop2 == "p2contQ") {
+      ggplot(SITEall, aes(x = numdate, y = avgQ)) +
+        geom_point() +
+        labs(
+          title = "",
+          x = "Day of Year",
+          y = "Discharge (L/s)"
+        )
+    } else if (plotop2 == "p2swc") {
+      ggplot(SITEall, aes(x = numdate, y = !!sym(p2swctype))) +
         geom_point() +
         labs(
           title = "",
           x = "Day of Year",
           y = "Surface Water Chemistry"
         )
+    } else if (plotop2 == "p2precip") {
+      if ("daily_secprecip" %in% colnames(SITEall)) {
+        ggplot(SITEall, aes(x = numdate, y = daily_secprecip)) +
+          geom_point() +
+          labs(
+            title = "",
+            x = "Day of Year",
+            y = "Precipitation Accumulation (mm)"
+          )
+      } else {
+        ggplot(SITEall, aes(x = numdate, y = daily_priprecip)) +
+          geom_point() +
+          labs(
+            title = "",
+            x = "Day of Year",
+            y = "Precipitation Accumulation (mm)"
+          )
+      }
+    } else if (plotop2 == "p2pchem") {
+      ggplot(SITEall, aes(x = numdate, y = !!sym(p2pchemtype))) +
+        geom_point() +
+        labs(
+          title = "",
+          x = "Day of Year",
+          y = "Precipitation Chemistry"
+        )
+    } else if (plotop2 == "p2nwater") {
+      ggplot(SITEall, aes(x = numdate, y = Nitrate_Mean)) +
+        geom_point() +
+        labs(
+          title = "",
+          x = "Day of Year",
+          y = "Nitrate"
+        )
+    } else if (plotop2 == "p2waq") {
+      ggplot(SITEall, aes(x = numdate, y = !!sym(p2waqtype))) +
+        geom_point() +
+        labs(
+          title = "",
+          x = "Day of Year",
+          y = "Water Quality"
+        )
     }
-  } else if (plotop2 != "p2no") {
-    # Add conditions for plotop2
   } else {
     plot(NULL, xlim = c(0, 100), ylim = c(0, 100), type = "n", xlab = "", ylab = "")
     text(50, 50, "No plot selected", cex = 2)

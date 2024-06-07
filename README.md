@@ -12,6 +12,8 @@ Install and use guide:
 
  Changelog:
 
+    v0.4.0 - Total UI overhaul, map functionality, data vis tab
+
     v0.3.6 - Reverted analyte scan, added progress bar
 
     v0.3.5 - small fixes after testing all AIS sites

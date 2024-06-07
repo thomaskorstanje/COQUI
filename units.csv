@@ -1,0 +1,58 @@
+﻿name,unit
+avgQ,litersPerSecond
+daily_priprecip,millimeters
+daily_secprecip,millimeters
+Br,milligramsPerLiter
+Ca,milligramsPerLiter
+Cl,milligramsPerLiter
+CO3,milligramsPerLiter
+DIC,milligramsPerLiter
+DOC,milligramsPerLiter
+F,milligramsPerLiter
+Fe,milligramsPerLiter
+HCO3,milligramsPerLiter
+K,milligramsPerLiter
+Mg,milligramsPerLiter
+Mn,milligramsPerLiter
+Na,milligramsPerLiter
+NH4 - N,milligramsPerLiter
+NO2 - N,milligramsPerLiter
+NO3+NO2 - N,milligramsPerLiter
+Ortho - P,milligramsPerLiter
+ANC,milliequivalentsPerLiter
+pH,pH
+Si,milligramsPerLiter
+SO4,milligramsPerLiter
+specificConductance,microsiemensPerCentimeter
+TDN,milligramsPerLiter
+TDP,milligramsPerLiter
+TDS,milligramsPerLiter
+TN,milligramsPerLiter
+TOC,milligramsPerLiter
+TP,milligramsPerLiter
+TPC,microgramsPerLiter
+TPN,microgramsPerLiter
+TSS,milligramsPerLiter
+TSS - Dry Mass,micrograms 
+UV Absorbance (254 nm),
+UV Absorbance (280 nm),
+pCa,milligramsPerLiter
+pMg,milligramsPerLiter
+pK,milligramsPerLiter
+pNa,milligramsPerLiter
+pNH4,milligramsPerLiter
+pNO3,milligramsPerLiter
+pSO4,milligramsPerLiter
+pPO4,milligramsPerLiter
+pCl,milligramsPerLiter
+pBr,milligramsPerLiter
+Nitrate_Mean,micromolesPerLiter
+mean_waqSpecCond,microsiemensPerCentimeter
+mean_waqDO,milligramsPerLiter
+mean_waqsealevelDOSat,percent
+mean_waqlocalDOSat,percent
+mean_waqpH,pH
+mean_waqchlorophyll,microgramsPerLiter
+mean_waqRelFluoro,microgramsPerLiter
+mean_waqTurbidity,formazinNephelometricUnit
+mean_waqfDOM,quinineSulfateUnit

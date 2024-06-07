@@ -173,9 +173,13 @@ ui <- fluidPage(
               )
             )
           ),
+          fluidRow(
+            "Select which data you want plotted. If no plot shows up, it means that data for selected date range does not exist."
+          )
         ),
         mainPanel(
-          plotOutput("data_plot")
+          plotOutput("data_plot1"),
+          plotOutput("data_plot2")
         )
       )
     ),
@@ -185,7 +189,9 @@ ui <- fluidPage(
       # About
       tabPanel(
         "About",
-        "COQUI - Chemical, Organics and Q(discharge) User Interface is an app designed..."
+        "COQUI – Chemical, Organics and Q(discharge) User Interface is an R app designed to quickly select,
+        compile and download NEON Aquatic data. It started as an R script to compare river chemistry in Puerto Rico and quickly evolved as more comparisons to other sites were needed.
+        After struggling with manipulating NEON data on multiple excel files, I decided to learn R and automate the process. NEON provides some wonderful packages (utilized in this app) to request and compile the wealth of data they have."
       ),
 
       # Version History
@@ -278,8 +284,11 @@ server <- function(input, output) {
   )
 
   # Data Vis
-  output$data_plot <- renderPlot({
-    plot_function(reactive_data(), input$plotop1, input$plotop2, input$p1swctype)
+  output$data_plot1 <- renderPlot({
+    plot1_func(reactive_data(), input$plotop1, input$p1swctype, input$p1pchemtype, input$p1waqtype)
+  })
+  output$data_plot2 <- renderPlot({
+    plot2_func(reactive_data(), input$plotop2, input$p2swctype, input$p2pchemtype, input$p2waqtype)
   })
 }
 
