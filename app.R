@@ -77,6 +77,7 @@ ui <- fluidPage(
                   "Precipitation Accumulation" = "precip",
                   "Precipitation Chemistry" = "pchem",
                   "Nitrate in Surface Water" = "nwater",
+                  "Handheld Discharge" = "hhQ",
                   "Water Quality" = "waq"
                 )
               )

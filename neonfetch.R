@@ -217,6 +217,26 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
     )
   } # END OF NWATER
 
+  if ("hhQ" %in% dataselect) {
+    tryCatch(
+      {
+        NEONhhq <- loadByProduct(
+          dpID = "DP1.20048.001",
+          site = user_site,
+          startdate = user_startdate,
+          enddate = user_enddate,
+          tabl = "dsc_fieldData",
+          check.size = FALSE
+        )
+        hhQ <- data.frame(date = as.Date(NEONhhq$dsc_fieldData$collectDate,), hhQ = NEONhhq$dsc_fieldData$finalDischarge)
+        SITEall <- left_join(SITEall, hhQ, by = "date")
+      },
+      error = function(err) {
+        cat("No Field Discharge Data Found", conditionMessage(err), "\n")
+      }
+    )
+  } # END OF HHQ
+
   if ("waq" %in% dataselect) {
     tryCatch(
       {
