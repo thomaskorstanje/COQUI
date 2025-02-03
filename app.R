@@ -1,6 +1,8 @@
 # COQUI - @thomaskorstanje, University of Maine - Environmental Geochemistry Lab
 # Chemistry, Organics, Q(Discharge) User Interface
 
+# install.packages(c("DT", "shiny", "leaflet", "tidyverse", "shinythemes", "neonUtilities", "shinycssloaders"))
+
 # libraries
 library(DT) # interactive datatable render
 library(shiny) # interactive web app
@@ -8,7 +10,6 @@ library(leaflet) # interactive maps
 library(tidyverse) # data management and plotting
 library(shinythemes) # themes for app
 library(neonUtilities) # NEON downloads
-library(shinydashboard) # ???
 library(shinycssloaders) # make the app look nice
 
 source("neonfetch.R") # refer some functions to separate file neonfetch
@@ -58,14 +59,14 @@ ui <- fluidPage(
               dateInput(
                 inputId = "startDate",
                 label = "Start Date",
-                value = "2019-01-01",
+                value = "2018-01-01",
                 width = "3000px"
               ),
               # End Date Selection
               dateInput(
                 inputId = "endDate",
                 label = "End Date",
-                value = "2019-03-31",
+                value = "2022-12-31",
                 width = "3000px"
               ),
               checkboxGroupInput(

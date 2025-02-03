@@ -33,8 +33,12 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
           check.size = FALSE
         )
 
-        avgQraw <- data.frame(date = as.Date(NEONcontinuousDischarge$csd_continuousDischarge$endDate), avgQ = NEONcontinuousDischarge$csd_continuousDischarge$maxpostDischarge)
-        avgQdaily <- avgQraw %>%
+        avgQraw <- data.frame(date = as.Date(NEONcontinuousDischarge$csd_continuousDischarge$endDate), avgQ = NEONcontinuousDischarge$csd_continuousDischarge$maxpostDischarge, qualflag = NEONcontinuousDischarge$csd_continuousDischarge$dischargeFinalQF)
+
+        avgQfiltered <- avgQraw # %>%
+        # filter(qualflag != 1)
+
+        avgQdaily <- avgQfiltered %>%
           group_by(date) %>%
           summarise(across(everything(), ~ round(mean(., na.rm = TRUE), 3)))
         SITEall <- left_join(SITEall, avgQdaily, by = "date")
@@ -97,38 +101,6 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
   }
   # END OF SWC
 
-
-  if ("precip" %in% dataselect) {
-    tryCatch(
-      {
-        NEONsecprecipitation <- loadByProduct(
-          dpID = "DP1.00006.001",
-          site = c(user_site),
-          startdate = user_startdate,
-          enddate = user_enddate,
-          tabl = "SECPRE_30min",
-          check.size = FALSE
-        )
-
-        if (!is.null(NEONsecprecipitation$SECPRE_30min)) {
-          precipsecraw <- data.frame(date = NEONsecprecipitation$SECPRE_30min$endDateTime, secprecip = NEONsecprecipitation$SECPRE_30min$secPrecipBulk)
-          precipsecsum <- precipsecraw %>%
-            mutate(date = as.Date(date)) %>%
-            group_by(date) %>%
-            summarize(daily_secprecip = sum(secprecip))
-
-          SITEall <- left_join(SITEall, precipsecsum, by = "date")
-        } else {
-          cat("No data found for SECPRE_30min. Skipping.\n")
-        }
-      },
-      error = function(e) {
-        cat("An error occurred while loading precipitation data:\n")
-        print(e)
-      }
-    )
-  }
-
   if ("precip" %in% dataselect) {
     tryCatch(
       {
@@ -143,6 +115,9 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
 
         if (!is.null(NEONpriprecipitation$PRIPRE_30min)) {
           precippriraw <- data.frame(date = NEONpriprecipitation$PRIPRE_30min$endDateTime, priprecip = NEONpriprecipitation$PRIPRE_30min$priPrecipBulk)
+
+          # ADD FILTERING FOR QUALITY FLAGS
+
           precipprisum <- precippriraw %>%
             mutate(date = as.Date(date)) %>%
             group_by(date) %>%
@@ -159,6 +134,43 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
       }
     )
   }
+
+  if ("precip" %in% dataselect) {
+    tryCatch(
+      {
+        NEONsecprecipitation <- loadByProduct(
+          dpID = "DP1.00006.001",
+          site = c(user_site),
+          startdate = user_startdate,
+          enddate = user_enddate,
+          tabl = "SECPRE_30min",
+          check.size = FALSE
+        )
+
+        if (!is.null(NEONsecprecipitation$SECPRE_30min)) {
+          precipsecraw <- data.frame(date = NEONsecprecipitation$SECPRE_30min$endDateTime, secprecip = NEONsecprecipitation$SECPRE_30min$secPrecipBulk, precipqual = NEONsecprecipitation$SECPRE_30min$secPrecipRangeQF)
+
+          precipsecrawfiltered <- precipsecraw # %>%
+          # filter(precipqual != 1)
+
+          precipsecsum <- precipsecrawfiltered %>%
+            mutate(date = as.Date(date)) %>%
+            group_by(date) %>%
+            summarize(daily_secprecip = sum(secprecip))
+
+          SITEall <- left_join(SITEall, precipsecsum, by = "date")
+        } else {
+          cat("No data found for SECPRE_30min. Skipping.\n")
+        }
+      },
+      error = function(e) {
+        cat("An error occurred while loading precipitation data:\n")
+        print(e)
+      }
+    )
+  }
+
+
 
   if ("pchem" %in% dataselect) {
     tryCatch(
@@ -228,7 +240,7 @@ coqui_function <- function(user_site, user_startdate, user_enddate, dataselect) 
           tabl = "dsc_fieldData",
           check.size = FALSE
         )
-        hhQ <- data.frame(date = as.Date(NEONhhq$dsc_fieldData$collectDate,), hhQ = NEONhhq$dsc_fieldData$finalDischarge)
+        hhQ <- data.frame(date = as.Date(NEONhhq$dsc_fieldData$collectDate, ), hhQ = NEONhhq$dsc_fieldData$finalDischarge)
         SITEall <- left_join(SITEall, hhQ, by = "date")
       },
       error = function(err) {
