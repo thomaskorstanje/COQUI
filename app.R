@@ -16,7 +16,7 @@ source("neonfetch.R") # refer some functions to separate file neonfetch
 fieldsiteData <- read.csv("fieldsite_data.csv") # import site data from .csv
 sites <- fieldsiteData$field_site_id
 
-analytes <- c("Br", "Ca", "Cl", "CO3", "DIC", "DOC", "F", "Fe", "HCO3", "K", "Mg", "Mn", "Na", "NH4 - N", "NO2 - N", "NO3+NO2 - N", "Ortho - P", "ANC", "pH", "Si", "SO4", "specificConductance", "TDN", "TDP", "TDS", "TN", "TOC", "TP", "TPC", "TPN", "TSS", "TSS - Dry Mass", "UV Absorbance (254 nm)", "UV Absorbance (280 nm)")
+analytes <- c("Br", "Ca", "Cl", "DIC", "DOC", "F", "Fe", "K", "Mg", "Mn", "Na", "NH4 - N", "NO2 - N", "NO3+NO2 - N", "Ortho - P", "ANC", "Si", "SO4", "specificConductance", "TDN", "TDP", "TDS", "TN", "TOC", "TP", "TPC", "TPN", "TSS", "TSS - Dry Mass", "UV Absorbance (254 nm)", "UV Absorbance (280 nm)")
 panalytes <- c("Ca", "Mg", "K", "Na", "NH4", "NH3", "SO4", "PO4", "Cl", "Br")
 waqanalytes <- c("SpecCond", "DO", "SL - DO Sat", "local - DO Sat", "pH", "Chlorophyll", "RelFluoro", "Turbidity", "DOM")
 
