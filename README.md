@@ -4,7 +4,7 @@ Olsen Lab - University of Maine, Earth and Climate Sciences
 
 Install and use guide: 
 
-1. download as a zip at https://github.com/thomaskorstanje/COQUI 
+1. hit the green code button and select download as a zip
 
 2. extract zip, then open app.R with R Studio
  
